@@ -1,0 +1,72 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        body {
+    color: #333333;
+    font-family: arial;
+    max-width: 650px;
+    margin: 0 auto;
+    padding: 0 16px;
+
+    display: flex;
+    flex-direction: row;
+    min-height: 100vh;
+}
+
+.main-content {
+    flex-grow: 1;
+    
+}
+
+footer {
+    color: #888888;
+    border-top: 1px solid #eeeeee;
+    margin-top: 500px;
+    padding: 16px 0;
+    clear: both;
+    margin-right: 400px;
+}
+
+header {
+    margin-top: 16px;
+    margin-bottom: 48px;
+}
+
+h1 {
+    font-size: 64px;
+    margin-bottom: 16px;
+}
+
+header a {
+    color: #888888;
+    margin-right: 16px;
+    text-decoration: none;
+}
+
+.portrait {
+    width: 250px;
+}
+
+
+    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>help</title>
+        {{!-- <link rel="icon" href="../../public/img/weather.png">
+
+    <link rel="stylesheet" type="text/css" href="/web-server/public/css/styles.css">
+    <script src="/web-server/public/js/app.js" type="text/javascript"></script> --}}
+</head>
+<body>
+    {{!-- nodemon only monitors files with the js extension, not hbs --}}
+    {{!-- to use, add on the end of the nodemon request -e js,hbs,whatever other extension --}}
+    {{!-- means nodemon will be watching these files too --}}
+{{!-- rendering partial, need the greater than sign to use --}}
+
+<div class="main-content">
+    <h1>{{users}}</h1>
+</div>
+</body>
+</html>
