@@ -3,10 +3,9 @@ const validator = require("validator")
 const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 const Task = require("./task")
-// ALWAYS REMEMBER process.env WHEN USING ENVIRONMENT VARIABLES OR ITLL BALLS UP
+
 mongoose.connect(process.env.CONN_URL, {
     useNewUrlParser: true,
-    // create index allows us to index data and quickly access data you need
     useCreateIndex: true
 })
 // middleware lets us customize our models. can use more advanced features
@@ -45,9 +44,9 @@ const userSchema = new mongoose.Schema({
                 // throw is just like return, kills the function
                 throw new Error("age must be positive")
             }
-            // when validating important stuff likecredit cards, use a library
+            // when validating important stuff like credit cards, use a library
         }
-        // CHALLENGE, VALIDATE PASSWORD
+        
     }, 
     password: {
         type: String,
@@ -84,7 +83,7 @@ const userSchema = new mongoose.Schema({
 // first is relationship name, second is options and tables to mod
 // not stored in the db, just for mongoose to figure out who owns what
 // foreign field is the name of the field on the other thing, the task, which will create the relationship
-// so its like using primary keys to look up collections. the vlue is _id and the relationship name is owner
+// so its like using primary keys to look up collections. the value is _id and the relationship name is owner
 userSchema.virtual("tasks", {
     ref: "Task",
     localField: "_id",
@@ -106,7 +105,7 @@ userSchema.methods.toJSON = async function () {
 userSchema.methods.generateAuthToken = async function () {
     // the this in this case is the request being passed through the function
     const user = this
-    // console.log(user.tokens)
+    
     // still in object form after being accessed. always convert to string
     // sign is for generating token
     const token = jwt.sign({_id: user._id.toString()}, process.env.SECRET)
@@ -121,17 +120,16 @@ userSchema.methods.generateAuthToken = async function () {
 }
 // this is how you add your own functions tp be used in the router bit
 // we use static on this as its referring to the whole collection. can use directly on the user model
-// console.log(userSchema
+
 userSchema.statics.findByCredentials = async (email, password) => {
     const user = await User.find({email: email})
     // if no user throw an error. kills the function here
-    // res.send(user)
+    
     if(!user) {
         console.log("nijfjvbei")
         throw new Error("unable to login")
     }
-    // returns 2 results annoyingly, so just use the first one
-    // console.log(user[0].password)
+    
 // hashes the passwords and compares the hashes. if no hash match, return false
     const isMatch = await bcrypt.compare(password, user[0].password)
 
@@ -141,22 +139,21 @@ userSchema.statics.findByCredentials = async (email, password) => {
 
     return user;
 }
-// to st up middleware, you use .pre to run smething before an event like saving. and .post to do somethig after like redirecting user
+// to set up middleware, you use .pre to run smething before an event like saving. and .post to do somethig after like redirecting user
 // the pre and post methods work like onevent in normal js. the first param is just the name of the action to perform
 // use a normal function because you need to use .this. cant use it onn arrow functions
-// so this sets up the functionality for the .save method you use elsewhere
-// hash plain text password 
+
 userSchema.pre("save", async function(next) {
-    // this here is the document being saved. cos its a pre
-    // canuse this like jsn to access different properties
+    // this here is the document being saved. because its a pre
+    // can use this like json to access different properties
     const user = this
 // true if user has been created and true if the key is password. isModified goes over the keys automatically
-// hash password and store it in the db
+
     if(user.isModified("password")){
         user.password = await bcrypt.hash(user.password, 8)
     }
 // the purpose is to run code before user is saved 
-// to run code after, always call next(), otherwise itll be stuck in a loop in the functon. next() also saves it
+// to run code after, always call next(), otherwise it'll be stuck in a loop in the functon. next() also saves it
 // have to do this because its an async function
     next()
 
@@ -165,13 +162,12 @@ userSchema.pre("save", async function(next) {
 // DELETE USER TASK WHEN USER IS REOMVED. runs just before the remove actually happens
 userSchema.pre("remove", async function (next) {
     const user = this
-// delete wherever the owner has the user id. you get it from this cos the user  runs the function through auth, taking your info to be used here with it
+// delete wherever the owner has the user id. you get it from this cos the user runs the function through auth, taking your info to be used here with it
     await Task.deleteMany({owner: user._id})
     next()
 })
-// very similar to plainold mongo syntax. takes url and options object
-// have to define database name in url
-// when you pass thisin it turns into a schema. pretty  much like laravel and mysql
+
+// when you pass thisin it turns into a schema. pretty much like laravel and mysql
 const User = mongoose.model("User", userSchema)
     // user is a contructor function (it defines parameters for the model)
     // obviously will throw error if wrong type or whatever other validation used
